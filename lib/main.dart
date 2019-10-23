@@ -130,12 +130,15 @@ class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProvider
               flex: 1,
               child: Container(
                 alignment: Alignment.topCenter,
-                child: Text(
-                  getCurrentStatus(),
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white.withOpacity(0.6),
-                      fontFamily: 'Quicksand'),
+                child: Transform.scale(
+                  scale: winnerCheck(board)?Tween(begin: 1.0, end: 1.5).transform(controller.value):1.0,
+                  child: Text(
+                    getCurrentStatus(),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: winnerCheck(board)?ColorTween(begin: Colors.white,end: Colors.yellow).transform(controller.value):Colors.white.withOpacity(0.6),
+                        fontFamily: 'Quicksand'),
+                  ),
                 ),
               ),
             ),
