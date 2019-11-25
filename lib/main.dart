@@ -4,30 +4,84 @@ import 'package:flutter/rendering.dart';
 import 'gamelogic.dart';
 
 //import 'package:flutter/animation.dart';
-
+bool computer=false;
 void main() {
-//  List<List<Icon>> board = [
-//    [null, null, null],
-//    [null, null, null],
-//    [null, null, null]
-//  ];
-//
-//  board[2][2] = xIcon;
-//  print(fullBoard(board));
-  runApp(MaterialApp(
-    home: TicTacToePage(),
-  ));
+  runApp(MaterialApp(initialRoute: '/', routes: {
+// When navigating to the "/" route, build the FirstScreen widget.
+    '/': (context) => LoginPage(),
+// When navigating to the "/second" route, build the SecondScreen widget.
+    '/homepage': (context) => TicTacToePage(),
+  }));
 }
 
-class TicTacToePage extends StatefulWidget{
+class LoginPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Tic Tac Toe'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Card(
 
+          child: InkWell(
+            splashColor: Colors.blue,
+            onTap: () {
+              print('Card tapped.');
+            },
+            child: Container(
+              width: 300,
+              height: 300,
+              child: Column(
+                children: <Widget>[
+                  Text("Chose Game Mode"),
+                  Column(
+                    children: <Widget>[
+                      RaisedButton(
+                        color: Colors.blue,
+                        child: Text('Single Player (v/s Computer)'),
+                        onPressed: () {
+                          computer=true;
+
+                          // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
+                          Navigator.pushNamed(context, '/homepage');
+                        },
+                      ),
+                      RaisedButton(
+                        color: Colors.blue,
+                        child: Text('Two Players'),
+                        onPressed: () {
+                          computer=false;
+                          // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
+                          Navigator.pushNamed(context, '/homepage');
+                        },
+                      ),
+                    ],
+                  ),
+
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        )
+
+    );
+  }
+}
+
+class TicTacToePage extends StatefulWidget {
   @override
   _TicTacToePageState createState() => _TicTacToePageState();
 }
 
-class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProviderStateMixin {
+class _TicTacToePageState extends State<TicTacToePage>
+    with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> _animation;
+
   @override
   void initState() {
     controller = AnimationController(
@@ -35,8 +89,7 @@ class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProvider
     controller.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {
         controller.reverse();
-      }
-      else if (status == AnimationStatus.dismissed) {
+      } else if (status == AnimationStatus.dismissed) {
         controller.forward();
       }
     });
@@ -46,7 +99,6 @@ class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProvider
     });
     super.initState();
   }
-
 
   Widget createIconFromToken(Token t) {
     if (t == null) {
@@ -71,16 +123,12 @@ class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProvider
         ),
       );
     }
-
-
   }
-
 
   Color createColorFromBool(bool isHighlighted) {
     if (isHighlighted) {
       return Colors.yellow.withOpacity(0.6);
-    }
-    else {
+    } else {
       return Colors.white24;
     }
   }
@@ -102,14 +150,15 @@ class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     CurvedAnimation smoothAnimation =
-    CurvedAnimation(parent: controller, curve: Curves.bounceOut);
+        CurvedAnimation(parent: controller, curve: Curves.bounceOut);
     return Scaffold(
       backgroundColor: Color(0xFFD6AA7C),
       body: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/background2.jpg'), fit: BoxFit.cover)),
+                image: AssetImage('assets/background2.jpg'),
+                fit: BoxFit.cover)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -131,12 +180,18 @@ class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProvider
               child: Container(
                 alignment: Alignment.topCenter,
                 child: Transform.scale(
-                  scale: winnerCheck(board)?Tween(begin: 1.0, end: 1.5).transform(controller.value):1.0,
+                  scale: winnerCheck(board)
+                      ? Tween(begin: 1.0, end: 1.5).transform(controller.value)
+                      : 1.0,
                   child: Text(
                     getCurrentStatus(),
                     style: TextStyle(
                         fontSize: 25,
-                        color: winnerCheck(board)?ColorTween(begin: Colors.white,end: Colors.yellow).transform(controller.value):Colors.white.withOpacity(0.6),
+                        color: winnerCheck(board)
+                            ? ColorTween(
+                                    begin: Colors.white, end: Colors.yellow)
+                                .transform(controller.value)
+                            : Colors.white.withOpacity(0.6),
                         fontFamily: 'Quicksand'),
                   ),
                 ),
@@ -175,7 +230,7 @@ class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProvider
                         },
                         child: Text("Reset",
                             style:
-                            TextStyle(fontSize: 25, color: Colors.white)),
+                                TextStyle(fontSize: 25, color: Colors.white)),
                       ),
                     ),
                   ),
@@ -211,8 +266,8 @@ class _TicTacToePageState extends State<TicTacToePage> with SingleTickerProvider
         ],
       ),
     );
-
   }
+
   @override
   void dispose() {
     controller.dispose();
@@ -224,10 +279,11 @@ class OneBox extends StatelessWidget {
   final Widget buttonChild;
   final Function onPressed;
   final Color backgroundColor;
+
   OneBox(
       {this.buttonChild = const Text(''),
-        this.onPressed,
-        this.backgroundColor});
+      this.onPressed,
+      this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
