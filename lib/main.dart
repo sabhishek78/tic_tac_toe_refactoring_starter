@@ -1,74 +1,100 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'dart:io';
 import 'gamelogic.dart';
+import 'dart:math';
 
 //import 'package:flutter/animation.dart';
-bool computer=false;
+bool computerPlayerMode = false;
+bool computerTurn = false;
+
 void main() {
   runApp(MaterialApp(initialRoute: '/', routes: {
 // When navigating to the "/" route, build the FirstScreen widget.
-    '/': (context) => LoginPage(),
+    '/': (context) => ChooseGameModePage(),
 // When navigating to the "/second" route, build the SecondScreen widget.
     '/homepage': (context) => TicTacToePage(),
   }));
 }
 
-class LoginPage extends StatelessWidget {
+class ChooseGameModePage extends StatefulWidget {
+  @override
+  _ChooseGameModePageState createState() => _ChooseGameModePageState();
+}
+
+class _ChooseGameModePageState extends State<ChooseGameModePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Tic Tac Toe'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Card(
-
-          child: InkWell(
-            splashColor: Colors.blue,
-            onTap: () {
-              print('Card tapped.');
-            },
-            child: Container(
-              width: 300,
-              height: 300,
-              child: Column(
-                children: <Widget>[
-                  Text("Chose Game Mode"),
-                  Column(
-                    children: <Widget>[
-                      RaisedButton(
-                        color: Colors.blue,
-                        child: Text('Single Player (v/s Computer)'),
-                        onPressed: () {
-                          computer=true;
-
-                          // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
-                          Navigator.pushNamed(context, '/homepage');
-                        },
-                      ),
-                      RaisedButton(
-                        color: Colors.blue,
-                        child: Text('Two Players'),
-                        onPressed: () {
-                          computer=false;
-                          // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
-                          Navigator.pushNamed(context, '/homepage');
-                        },
-                      ),
-                    ],
-                  ),
-
-                ],
-              ),
+      body: SizedBox.expand(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/background.jpg"),
+              fit: BoxFit.cover,
             ),
           ),
+          child: Column(
+
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "TIC TAC TOE",
+                  style: TextStyle(
+                      fontSize: 45,
+                      color: Colors.white,
+                      fontFamily: 'Quicksand'),
+                ),
+                SizedBox(height: 30,),
+                Text(
+                  "Choose Game Mode",
+                  style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.white,
+                      fontFamily: 'Quicksand'),
+                ),
+                SizedBox(height: 20,),
+                Column(
+                  children: <Widget>[
+                    RaisedButton(
+                      
+                      color: Colors.transparent,
+                      child: Text('Single Player (v/s Computer)',style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontFamily: 'Quicksand'),),
+                      onPressed: () {
+                        computerPlayerMode = true;
+                        print("computer mode selected",);
+                        setState(() {});
+                        // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
+                        Navigator.pushNamed(context, '/homepage');
+                      },
+                    ),
+                    SizedBox(height: 20,),
+                    RaisedButton(
+                      color: Colors.transparent,
+                      child: Text('Two Players',style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontFamily: 'Quicksand'),),
+                      onPressed: () {
+                        computerPlayerMode = false;
+                        // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
+                        Navigator.pushNamed(context, '/homepage');
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
         ),
+      ),
 
-        )
-
-    );
+        );
   }
 }
 
@@ -94,7 +120,7 @@ class _TicTacToePageState extends State<TicTacToePage>
       }
     });
     controller.addListener(() {
-      print(controller.value);
+      //print(controller.value);
       setState(() {});
     });
     super.initState();
@@ -157,7 +183,7 @@ class _TicTacToePageState extends State<TicTacToePage>
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/background2.jpg'),
+                image: AssetImage('assets/background.jpg'),
                 fit: BoxFit.cover)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -227,6 +253,7 @@ class _TicTacToePageState extends State<TicTacToePage>
                         onPressed: () {
                           gameReset();
                           setState(() {});
+                          Navigator.pushNamed(context, '/');
                         },
                         child: Text("Reset",
                             style:
@@ -248,9 +275,48 @@ class _TicTacToePageState extends State<TicTacToePage>
   }
 
   void updateBox(int r, int c) {
-    if (legitMove(board[r][c])) {
-      board[r][c] = currentPlayer;
-      changePlayerIfGameIsNotOver();
+    print("update box method called");
+    if (!computerPlayerMode) {
+      print("user turn");
+
+      if (legitMove(board[r][c])) {
+        print("Move registered player mode");
+        board[r][c] = currentPlayer;
+        changePlayerIfGameIsNotOver();
+      }
+    }else if(computerPlayerMode && !computerTurn){
+      if (legitMove(board[r][c])) {
+        controller.forward();
+        board[r][c] = currentPlayer;
+        print("Player Moves in computer mode ");
+        print("hi");
+        computerTurn=!computerTurn;
+        changePlayerIfGameIsNotOver();
+        setState(() {
+        });
+
+        int row;
+        int col;
+        Random rand= new Random();
+        do{
+          row=rand.nextInt(3);
+          col=rand.nextInt(3);
+          print("row=$row");
+          print("col=$col");
+        }
+        while(!legitMove(board[row][col]) && !fullBoard(board) && !winnerCheck(board));
+
+        updateBox(row, col);
+      }
+    }
+
+    if(computerPlayerMode && computerTurn){
+       controller.forward();
+        board[r][c] = currentPlayer;
+        print("Computer Moves in computer mode ");
+        computerTurn=!computerTurn;
+        changePlayerIfGameIsNotOver();
+        setState(() {});
     }
   }
 

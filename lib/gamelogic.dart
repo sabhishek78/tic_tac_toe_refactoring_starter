@@ -1,4 +1,6 @@
 // import 'package:flutter/material.dart';
+import 'main.dart';
+
 
 
 enum Token {
@@ -20,7 +22,6 @@ List<List<bool>> colorBoard = [
 
 //  takes an icon, checks if
 bool legitMove(Token t) {
-
   return t == null && !winnerCheck(board);
 }
 
@@ -41,10 +42,15 @@ Token currentPlayer = Token.x; //X will always be player 1
 
 //function to change player based on currentPlayer value which is a string,
 changePlayer(Token player) {
-  if (player == Token.x) {
+  if (player == Token.x ) {
+
     currentPlayer = Token.o;
-  } else if (player == Token.o) {
+
+
+  } else if (player == Token.o ) {
+
     currentPlayer = Token.x;
+
   }
 }
 
@@ -132,11 +138,6 @@ bool winnerCheck(List<List<Token>> board) {
 
 
 void changePlayerIfGameIsNotOver() {
-//    if (winnerCheck(board) || fullBoard(board)) {
-//      return;
-//    }
-//    changePlayer(currentPlayer);
-
   if (!winnerCheck(board) && !fullBoard(board)) {
     changePlayer(currentPlayer);
   }
