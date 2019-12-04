@@ -38,63 +38,70 @@ class _ChooseGameModePageState extends State<ChooseGameModePage> {
             ),
           ),
           child: Column(
-
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "TIC TAC TOE",
-                  style: TextStyle(
-                      fontSize: 45,
-                      color: Colors.white,
-                      fontFamily: 'Quicksand'),
-                ),
-                SizedBox(height: 30,),
-                Text(
-                  "Choose Game Mode",
-                  style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.white,
-                      fontFamily: 'Quicksand'),
-                ),
-                SizedBox(height: 20,),
-                Column(
-                  children: <Widget>[
-                    RaisedButton(
-                      
-                      color: Colors.transparent,
-                      child: Text('Single Player (v/s Computer)',style: TextStyle(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "TIC TAC TOE",
+                style: TextStyle(
+                    fontSize: 45, color: Colors.white, fontFamily: 'Quicksand'),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                "Choose Game Mode",
+                style: TextStyle(
+                    fontSize: 30, color: Colors.white, fontFamily: 'Quicksand'),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Column(
+                children: <Widget>[
+                  RaisedButton(
+                    color: Colors.transparent,
+                    child: Text(
+                      'Single Player (v/s Computer)',
+                      style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
-                          fontFamily: 'Quicksand'),),
-                      onPressed: () {
-                        computerPlayerMode = true;
-                        print("computer mode selected",);
-                        setState(() {});
-                        // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
-                        Navigator.pushNamed(context, '/homepage');
-                      },
+                          fontFamily: 'Quicksand'),
                     ),
-                    SizedBox(height: 20,),
-                    RaisedButton(
-                      color: Colors.transparent,
-                      child: Text('Two Players',style: TextStyle(
+                    onPressed: () {
+                      computerPlayerMode = true;
+                      print(
+                        "computer mode selected",
+                      );
+                      setState(() {});
+                      // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
+                      Navigator.pushNamed(context, '/homepage');
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  RaisedButton(
+                    color: Colors.transparent,
+                    child: Text(
+                      'Two Players',
+                      style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
-                          fontFamily: 'Quicksand'),),
-                      onPressed: () {
-                        computerPlayerMode = false;
-                        // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
-                        Navigator.pushNamed(context, '/homepage');
-                      },
+                          fontFamily: 'Quicksand'),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                    onPressed: () {
+                      computerPlayerMode = false;
+                      // Navigator.push(context,MaterialPageRoute(builder: (context)=> HomePage()));
+                      Navigator.pushNamed(context, '/homepage');
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-
-        );
+    );
   }
 }
 
@@ -183,8 +190,7 @@ class _TicTacToePageState extends State<TicTacToePage>
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/background.jpg'),
-                fit: BoxFit.cover)),
+                image: AssetImage('assets/background.jpg'), fit: BoxFit.cover)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -284,39 +290,45 @@ class _TicTacToePageState extends State<TicTacToePage>
         board[r][c] = currentPlayer;
         changePlayerIfGameIsNotOver();
       }
-    }else if(computerPlayerMode && !computerTurn){
+    }
+    else if ( !computerTurn) {
       if (legitMove(board[r][c])) {
         controller.forward();
         board[r][c] = currentPlayer;
         print("Player Moves in computer mode ");
         print("hi");
-        computerTurn=!computerTurn;
+        computerTurn = !computerTurn;
         changePlayerIfGameIsNotOver();
-        setState(() {
-        });
+        setState(() {});
 
         int row;
         int col;
-        Random rand= new Random();
-        do{
-          row=rand.nextInt(3);
-          col=rand.nextInt(3);
+        Random rand = new Random();
+        do {
+          row = rand.nextInt(3);
+          col = rand.nextInt(3);
           print("row=$row");
           print("col=$col");
-        }
-        while(!legitMove(board[row][col]) && !fullBoard(board) && !winnerCheck(board));
+        } while (!legitMove(board[row][col]) &&
+            !fullBoard(board) &&
+            !winnerCheck(board));
 
         updateBox(row, col);
       }
     }
 
-    if(computerPlayerMode && computerTurn){
-       controller.forward();
+    else if (computerPlayerMode && computerTurn) {
+      controller.forward();
+
+      Future.delayed(const Duration(milliseconds: 2000), () {
         board[r][c] = currentPlayer;
-        print("Computer Moves in computer mode ");
-        computerTurn=!computerTurn;
-        changePlayerIfGameIsNotOver();
         setState(() {});
+        computerTurn = !computerTurn;
+        changePlayerIfGameIsNotOver();
+      });
+
+      print("Computer Moves in computer mode ");
+
     }
   }
 
